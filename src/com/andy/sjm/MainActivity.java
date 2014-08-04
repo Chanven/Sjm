@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
@@ -31,7 +32,8 @@ public class MainActivity extends Activity{
 	};
 	
 //	private String mUrl = "http://1251001823.cdn.myqcloud.com/1251001823/wechat/sjm/launcher";
-	private String mUrl = "http://game.9g.com/sjm/game.html";
+//	private String mUrl = "http://game.9g.com/sjm/game.html";
+	private String mUrl = "http://117show.com/shenjingmao_android/sjm/";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,38 +47,45 @@ public class MainActivity extends Activity{
 	private void initView() {
 		mWebView = (WebView) this.findViewById(R.id.main_webview);
 		loadingTv = (TextView) this.findViewById(R.id.loading_tv);
-		// »ñÈ¡ÒªÇ¶Èë¹ã¸æÌõµÄ²¼¾Ö
+		// è·å–è¦åµŒå…¥å¹¿å‘Šæ¡çš„å¸ƒå±€
 		adLayout=(LinearLayout)this.findViewById(R.id.adLayout);
 	}
 	
 	private void initData() {
-		// ÊµÀı»¯¹ã¸æÌõ
+		// å®ä¾‹åŒ–å¹¿å‘Šæ¡
 		adView = new AdView(this, AdSize.FIT_SCREEN);
 		adView.setAdListener(new AdViewListener() {
 		    @Override
 		    public void onSwitchedAd(AdView adView) {
-		        // ÇĞ»»¹ã¸æ²¢Õ¹Ê¾
+		        // åˆ‡æ¢å¹¿å‘Šå¹¶å±•ç¤º
 		    }
 
 		    @Override
 		    public void onReceivedAd(AdView adView) {
-		        // ÇëÇó¹ã¸æ³É¹¦
+		        // è¯·æ±‚å¹¿å‘ŠæˆåŠŸ
 		    }
 
 		    @Override
 		    public void onFailedToReceivedAd(AdView adView) {
-		        // ÇëÇó¹ã¸æÊ§°Ü
+		        // è¯·æ±‚å¹¿å‘Šå¤±è´¥
 		    }
 		});
 		
 		mWebView.loadUrl(mUrl);
 		mWebView.getSettings().setJavaScriptEnabled(true);
+		mWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 		
 		mWebView.setWebViewClient(new WebViewClient(){
 			@Override
 			public void onPageStarted(WebView view, String url, Bitmap favicon) {
 				super.onPageStarted(view, url, favicon);
 				loadingTv.setVisibility(View.VISIBLE);
+			}
+			
+			@Override
+			public void onReceivedError(WebView view, int errorCode,
+					String description, String failingUrl) {
+				super.onReceivedError(view, errorCode, description, failingUrl);
 			}
 			
 			@Override
@@ -87,7 +96,7 @@ public class MainActivity extends Activity{
 					
 					@Override
 					public void run() {
-						// ½«¹ã¸æÌõ¼ÓÈëµ½²¼¾ÖÖĞ
+						// å°†å¹¿å‘Šæ¡åŠ å…¥åˆ°å¸ƒå±€ä¸­
 						adLayout.addView(adView);
 					}
 				}, 10*1000);
