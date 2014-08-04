@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -19,7 +20,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity{
 	
 	private WebView mWebView;
-	private TextView loadingTv;
+	private TextView loadingTv,mErrorTv;
 	private AdView adView = null;
 	private LinearLayout adLayout = null;
 	
@@ -47,6 +48,15 @@ public class MainActivity extends Activity{
 	private void initView() {
 		mWebView = (WebView) this.findViewById(R.id.main_webview);
 		loadingTv = (TextView) this.findViewById(R.id.loading_tv);
+		mErrorTv = (TextView) this.findViewById(R.id.error_tv);
+		mErrorTv.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mErrorTv.setVisibility(View.GONE);
+				mWebView.loadUrl(mUrl);
+			}
+		});
 		// 获取要嵌入广告条的布局
 		adLayout=(LinearLayout)this.findViewById(R.id.adLayout);
 	}
@@ -86,6 +96,9 @@ public class MainActivity extends Activity{
 			public void onReceivedError(WebView view, int errorCode,
 					String description, String failingUrl) {
 				super.onReceivedError(view, errorCode, description, failingUrl);
+				mWebView.loadData("<html><body></body></html>", "text/html", "UTF-8");
+				loadingTv.setVisibility(View.GONE);
+				mErrorTv.setVisibility(View.VISIBLE);
 			}
 			
 			@Override
@@ -96,6 +109,9 @@ public class MainActivity extends Activity{
 					
 					@Override
 					public void run() {
+						if (adView.getParent() != null) {
+							adLayout.removeAllViews();
+						}
 						// 将广告条加入到布局中
 						adLayout.addView(adView);
 					}
